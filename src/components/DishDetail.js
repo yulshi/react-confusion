@@ -18,7 +18,7 @@ function RenderComments({ comments }) {
 
     const comment = comments.map(element => {
         return(
-            <li>
+            <li key={element.id}>
                 {element.comment}
             </li>
         );
