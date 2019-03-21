@@ -1,6 +1,13 @@
-import React from 'react';
-import { Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import React, { Component } from 'react';
+import {
+    Card, CardImg, CardText, CardBody,
+    CardTitle, Breadcrumb, BreadcrumbItem,
+    Modal, ModalHeader, ModalBody,
+    Row, Col, Button, Label
+} from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { LocalForm, Control } from 'react-redux-form';
+
 function RenderDish({ dish }) {
 
     return (
@@ -40,36 +47,94 @@ function RenderComments({ comments, addComment, dishId }) {
 
 }
 
-const DishDetail = (props) => {
+function handleCommentSubmit(values) {
+    alert(JSON.stringify(values));
+}
 
-    if (!props.dish) {
-        return (<div></div>);
+class DishDetail extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            isModalOpen: false
+        }
+        this.toggleModal = this.toggleModal.bind(this);
     }
 
-    return (
-        <div className='container'>
-            <div className="row">
-                <Breadcrumb>
-                    <BreadcrumbItem><Link to="/menu">Menu</Link></BreadcrumbItem>
-                    <BreadcrumbItem active>{props.dish.name}</BreadcrumbItem>
-                </Breadcrumb>
-                <div className="col-12">
-                    <h3>{props.dish.name}</h3>
-                    <hr />
+    toggleModal() {
+        this.setState(
+            { isModalOpen: !this.state.isModalOpen }
+        );
+    }
+
+    render() {
+        return (
+            <div className='container'>
+                <div className="row">
+                    <Breadcrumb>
+                        <BreadcrumbItem><Link to="/menu">Menu</Link></BreadcrumbItem>
+                        <BreadcrumbItem active>{this.props.dish.name}</BreadcrumbItem>
+                    </Breadcrumb>
+                    <div className="col-12">
+                        <h3>{this.props.dish.name}</h3>
+                        <hr />
+                    </div>
                 </div>
+                <div className='row'>
+                    <div className='col-12 col-md-5 m-1'>
+                        <RenderDish dish={this.props.dish} />
+                    </div>
+                    <div className='col-12 col-md-5 m-1'>
+                        <RenderComments comments={this.props.comments}
+                            addComment={this.props.addComment}
+                            dishId={this.props.dish.id} />
+                        <Button color='primary' onClick={this.toggleModal}>
+                            Add Comments
+                        </Button>
+                    </div>
+                </div>
+                <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+                    <ModalHeader toggle={this.toggleModal}>
+                        Please Leave Your Comments
+                    </ModalHeader>
+                    <ModalBody>
+                        <LocalForm onSubmit={values => handleCommentSubmit(values)}>
+                            <Row className='form-group'>
+                                <Label htmlFor='rating' md={2}>Rating</Label>
+                                <Col md={10}>
+                                    <Control.select model=".rating" id='rating' name="rating"
+                                        className="form-control">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                    </Control.select>
+                                </Col>
+                            </Row>
+                            <Row className='form-group'>
+                                <Label htmlFor='author' md={2}>Author</Label>
+                                <Col md={10}>
+                                    <Control.text model='.author' id='author' name='author'
+                                        className='form-control' placeholder='Author Name' />
+                                </Col>
+                            </Row>
+                            <Row className='form-group'>
+                                <Label htmlFor='comment' md={2}>Comment</Label>
+                                <Col md={10}>
+                                    <Control.textarea model='.comment' id='comment' name='comment'
+                                        rows={5} className='form-control' />
+                                </Col>
+                            </Row>
+                            <Button type='submit' value='submit' color='primary'>
+                                Submit
+                            </Button>
+                        </LocalForm>
+                    </ModalBody>
+                </Modal>
             </div>
-            <div className='row'>
-                <div className='col-12 col-md-5 m-1'>
-                    <RenderDish dish={props.dish} />
-                </div>
-                <div className='col-12 col-md-5 m-1'>
-                    <RenderComments comments={props.comments} 
-                        addComment={props.addComment} 
-                        dishId={props.dish.id} />
-                </div>
-            </div>
-        </div>
-    );
+        );
+    }
 }
 
 
