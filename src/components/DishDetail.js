@@ -37,6 +37,7 @@ function RenderComments({ comments, addComment, dishId }) {
                         );
                     })}
                 </ul>
+                <CommentForm dishId={dishId} addComment={addComment} />
             </div>
         );
     } else {
@@ -47,18 +48,19 @@ function RenderComments({ comments, addComment, dishId }) {
 
 }
 
-function handleCommentSubmit(values) {
-    alert(JSON.stringify(values));
-}
-
-class DishDetail extends Component {
+class CommentForm extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             isModalOpen: false
         }
+        this.handleCommentSubmit = this.handleCommentSubmit.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
+    }
+
+    handleCommentSubmit(values) {
+        this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
     }
 
     toggleModal() {
@@ -69,36 +71,16 @@ class DishDetail extends Component {
 
     render() {
         return (
-            <div className='container'>
-                <div className="row">
-                    <Breadcrumb>
-                        <BreadcrumbItem><Link to="/menu">Menu</Link></BreadcrumbItem>
-                        <BreadcrumbItem active>{this.props.dish.name}</BreadcrumbItem>
-                    </Breadcrumb>
-                    <div className="col-12">
-                        <h3>{this.props.dish.name}</h3>
-                        <hr />
-                    </div>
-                </div>
-                <div className='row'>
-                    <div className='col-12 col-md-5 m-1'>
-                        <RenderDish dish={this.props.dish} />
-                    </div>
-                    <div className='col-12 col-md-5 m-1'>
-                        <RenderComments comments={this.props.comments}
-                            addComment={this.props.addComment}
-                            dishId={this.props.dish.id} />
-                        <Button color='primary' onClick={this.toggleModal}>
-                            Add Comments
+            <div>
+                <Button color='primary' onClick={this.toggleModal}>
+                    Add Comments
                         </Button>
-                    </div>
-                </div>
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
                     <ModalHeader toggle={this.toggleModal}>
                         Please Leave Your Comments
                     </ModalHeader>
                     <ModalBody>
-                        <LocalForm onSubmit={values => handleCommentSubmit(values)}>
+                        <LocalForm onSubmit={values => this.handleCommentSubmit(values)}>
                             <Row className='form-group'>
                                 <Label htmlFor='rating' md={2}>Rating</Label>
                                 <Col md={10}>
@@ -135,6 +117,38 @@ class DishDetail extends Component {
             </div>
         );
     }
+}
+
+function handleCommentSubmit(values) {
+    alert(JSON.stringify(values));
+}
+
+function DishDetail(props) {
+
+    return (
+        <div className='container'>
+            <div className="row">
+                <Breadcrumb>
+                    <BreadcrumbItem><Link to="/menu">Menu</Link></BreadcrumbItem>
+                    <BreadcrumbItem active>{props.dish.name}</BreadcrumbItem>
+                </Breadcrumb>
+                <div className="col-12">
+                    <h3>{props.dish.name}</h3>
+                    <hr />
+                </div>
+            </div>
+            <div className='row'>
+                <div className='col-12 col-md-5 m-1'>
+                    <RenderDish dish={props.dish} />
+                </div>
+                <div className='col-12 col-md-5 m-1'>
+                    <RenderComments comments={props.comments}
+                        addComment={props.addComment}
+                        dishId={props.dish.id} />
+                </div>
+            </div>
+        </div>
+    );
 }
 
 
