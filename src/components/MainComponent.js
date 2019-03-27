@@ -7,7 +7,7 @@ import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import Home from './HomeComponent';
 import Contact from './ContactComponent';
 import { connect } from 'react-redux';
-import { addComment, fetchDishes, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
+import { addComment, fetchDishes, fetchPromos, fetchLeaders, fetchComments } from '../redux/ActionCreators';
 import { actions } from 'react-redux-form';
 
 const mapStateToProps = state => {
@@ -24,16 +24,17 @@ const mapDispatchToProps = (dispatch) => ({
   fetchDishes: () => dispatch(fetchDishes()),
   fetchPromos: () => dispatch(fetchPromos()),
   fetchLeaders: () => dispatch(fetchLeaders()),
+  fetchComments: () => dispatch(fetchComments()),
   resetFeedbackForm: () => dispatch(actions.reset('feedback'))
 });
 
 class Main extends Component {
 
   componentDidMount() {
-    console.log('componentDidMount is invoked !!!')
     this.props.fetchDishes();
     this.props.fetchPromos();
     this.props.fetchLeaders();
+    this.props.fetchComments();
   }
 
   render() {
@@ -55,11 +56,13 @@ class Main extends Component {
     };
 
     const DishWithId = ({ match, location, history }) => {
+      console.log(this.props)
       return (
         <DishDetail dish={this.props.dishes.dishes.filter(dish => dish.id === parseInt(match.params.id, 10))[0]}
           isLoading={this.props.dishes.isLoading}
           errmsg={this.props.dishes.errmsg}
-          comments={this.props.comments.filter(c => c.dishId === parseInt(match.params.id, 10))}
+          comments={this.props.comments.comments.filter(c => c.dishId === parseInt(match.params.id, 10))}
+          commentsErrMsg={this.props.comments.errmsg}
           addComment={this.props.addComment} />
       );
     }

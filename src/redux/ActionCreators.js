@@ -82,3 +82,20 @@ export const fetchLeaders = () => (dispatch) => {
             .then(leaders => dispatch(addLeaders(leaders)));
 
 }
+
+// For Comments:
+export const addComments = (comments) => ({
+    type: ActionTypes.ADD_COMMENTS,
+    payload: comments
+});
+
+export const commentsFailed = (errmsg) => ({
+    type: ActionTypes.COMMENTS_FAILED,
+    payload: errmsg
+});
+
+export const fetchComments = () => (dispatch) => {
+    return fetch(baseUrl + 'comments')
+        .then(resp => resp.json())
+        .then(comments => dispatch(addComments(comments)));
+}

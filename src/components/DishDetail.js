@@ -23,8 +23,15 @@ function RenderDish({ dish }) {
     );
 }
 
-function RenderComments({ comments, addComment, dishId }) {
+function RenderComments({ comments, addComment, dishId, commentsErrMsg}) {
 
+    if(commentsErrMsg) {
+        return (
+            <div className='text-danger'>
+                {commentsErrMsg}
+            </div>
+        );
+    }
     if (comments != null) {
         return (
             <div className="col-12 col-md-5 m-1">
@@ -74,9 +81,9 @@ class CommentForm extends Component {
     render() {
         return (
             <div>
-                <Button color='primary' onClick={this.toggleModal}>
+                <Button color='primary' onClick={this.toggleModal} size='sm'>
                     Add Comments
-                        </Button>
+                </Button>
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
                     <ModalHeader toggle={this.toggleModal}>
                         Please Leave Your Comments
@@ -163,7 +170,8 @@ function DishDetail(props) {
                     <div className='col-12 col-md-5 m-1'>
                         <RenderComments comments={props.comments}
                             addComment={props.addComment}
-                            dishId={props.dish.id} />
+                            dishId={props.dish.id} 
+                            commentsErrMsg={props.commentsErrMsg} />
                     </div>
                 </div>
             </div>
