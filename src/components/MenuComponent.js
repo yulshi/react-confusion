@@ -43,7 +43,7 @@ function Menu(props) {
         return (
             <div className='container'>
                 <div className='row'>
-                    <h4>{props.errmsg}</h4>
+                    <h4>{props.dishes.errmsg}</h4>
                 </div>
             </div>
         );
