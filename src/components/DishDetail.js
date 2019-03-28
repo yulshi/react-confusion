@@ -9,17 +9,23 @@ import { Link } from 'react-router-dom';
 import { LocalForm, Control } from 'react-redux-form';
 import { Loading } from './LoadingComponent'
 import { baseUrl } from '../shared/baseUrl';
+import { FadeTransform, Fade, Stagger } from 'react-animation-components';
 
 function RenderDish({ dish }) {
 
     return (
-        <Card>
-            <CardImg top src={baseUrl + dish.image} alt={dish.name} />
-            <CardBody>
-                <CardTitle className='h5'>{dish.name}</CardTitle>
-                <CardText>{dish.description}</CardText>
-            </CardBody>
-        </Card>
+        <FadeTransform in
+            transformProps={{
+                exitTransform: 'scale(0.5) translateY(-50%)'
+            }}>
+            <Card>
+                <CardImg top src={baseUrl + dish.image} alt={dish.name} />
+                <CardBody>
+                    <CardTitle className='h5'>{dish.name}</CardTitle>
+                    <CardText>{dish.description}</CardText>
+                </CardBody>
+            </Card>
+        </FadeTransform>
     );
 }
 
@@ -42,19 +48,23 @@ function RenderComments({ comments, postComment, dishId, commentsErrMsg }) {
             <div>
                 <h4>Comments</h4>
                 <ul className="list-unstyled">
-                    {comments.map(comment => {
-                        return (
-                            <li key={comment.id}>
-                                <p>{comment.comment}</p>
-                                <p className='text-muted'>
-                                    <i class="fa fa-user"></i> {comment.author}
-                                    {comment.date
-                                        ? <span><i className='fa fa-at px-1'></i>{formater.format(new Date(Date.parse(comment.date)))}</span>
-                                        : ''}
-                                </p>
-                            </li>
-                        );
-                    })}
+                    <Stagger in>
+                        {comments.map(comment => {
+                            return (
+                                <Fade in>
+                                    <li key={comment.id}>
+                                        <p>{comment.comment}</p>
+                                        <p className='text-muted'>
+                                            <i class="fa fa-user"></i> {comment.author}
+                                            {comment.date
+                                                ? <span><i className='fa fa-at px-1'></i>{formater.format(new Date(Date.parse(comment.date)))}</span>
+                                                : ''}
+                                        </p>
+                                    </li>
+                                </Fade>
+                            );
+                        })}
+                    </Stagger>
                 </ul>
                 <CommentForm dishId={dishId} postComment={postComment} />
             </div>
@@ -136,10 +146,6 @@ class CommentForm extends Component {
             </div>
         );
     }
-}
-
-function handleCommentSubmit(values) {
-    alert(JSON.stringify(values));
 }
 
 function DishDetail(props) {
